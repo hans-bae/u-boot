@@ -38,6 +38,7 @@ int board_early_init_f(void)
 
 int checkboard(void)
 {
+#ifdef CONFIG_TARGET_LS1043ARDB
 	static const char *freq[2] = {"100.00MHZ", "156.25MHZ"};
 #ifndef CONFIG_SD_BOOT
 	u8 cfg_rcw_src1, cfg_rcw_src2;
@@ -71,6 +72,9 @@ int checkboard(void)
 	sd1refclk_sel = CPLD_READ(sd1refclk_sel);
 	printf("SD1_CLK1 = %s, SD1_CLK2 = %s\n", freq[sd1refclk_sel], freq[0]);
 
+#else
+	printf("Board: LS1043ADCM\n");
+#endif
 	return 0;
 }
 
@@ -199,7 +203,19 @@ int config_board_mux(void)
 #if defined(CONFIG_MISC_INIT_R)
 int misc_init_r(void)
 {
+#ifdef CONFIG_TARGET_LS1043ADCM
+	struct ccsr_gur __iomem *gur = (void *)(CONFIG_SYS_FSL_GUTS_ADDR);
+	u32 porsr1;
+#endif
 	config_board_mux();
+
+#ifdef CONFIG_TARGET_LS1043ADCM
+	/* A-010539: */
+	porsr1 = in_be32(&gur->porsr1);
+	porsr1 &= ~FSL_CHASSIS2_CCSR_PORSR1_RCW_MASK;
+	out_be32((void *)(CONFIG_SYS_DCSR_DCFG_ADDR + DCFG_DCSR_PORCR1),
+		 porsr1);
+#endif
 	return 0;
 }
 #endif

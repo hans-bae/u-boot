@@ -1098,6 +1098,18 @@ config TARGET_LS1046AQDS
 	  development platform that supports the QorIQ LS1046A
 	  Layerscape Architecture processor.
 
+config TARGET_LS1043ADCM
+	bool "Support ls1043adcm"
+	select ARCH_LS1043A
+	select ARM64
+	select ARMV8_MULTIENTRY
+	select BOARD_LATE_INIT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	imply SCSI
+	help
+	  Support for Freescale LS1043ADCM platform.
+
 config TARGET_LS1046ARDB
 	bool "Support ls1046ardb"
 	select ARCH_LS1046A

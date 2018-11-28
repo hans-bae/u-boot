@@ -124,7 +124,6 @@
 
 /* IFC */
 #ifndef SPL_NO_IFC
-#if !defined(CONFIG_QSPI_BOOT) && !defined(CONFIG_SD_BOOT_QSPI)
 #define CONFIG_FSL_IFC
 /*
  * CONFIG_SYS_FLASH_BASE has the final address (core view)
@@ -136,6 +135,7 @@
 #define CONFIG_SYS_FLASH_BASE_PHYS		CONFIG_SYS_FLASH_BASE
 #define CONFIG_SYS_FLASH_BASE_PHYS_EARLY	0x00000000
 
+#if !defined(CONFIG_QSPI_BOOT) && !defined(CONFIG_SD_BOOT_QSPI)
 #ifdef CONFIG_MTD_NOR_FLASH
 #define CONFIG_FLASH_CFI_DRIVER
 #define CONFIG_SYS_FLASH_CFI
@@ -176,6 +176,7 @@
 #endif
 
 /*  DSPI  */
+#ifndef CONFIG_TARGET_LS1043ADCM
 #ifndef SPL_NO_DSPI
 #define CONFIG_FSL_DSPI
 #ifdef CONFIG_FSL_DSPI
@@ -186,6 +187,7 @@
 #if !defined(CONFIG_QSPI_BOOT) && !defined(CONFIG_SD_BOOT_QSPI)
 #define CONFIG_SF_DEFAULT_BUS		1
 #define CONFIG_SF_DEFAULT_CS		0
+#endif
 #endif
 #endif
 #endif

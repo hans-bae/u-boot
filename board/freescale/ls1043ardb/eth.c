@@ -42,6 +42,7 @@ int board_eth_init(bd_t *bis)
 	/* Register the 10G MDIO bus */
 	fm_memac_mdio_init(bis, &tgec_mdio_info);
 
+#ifndef CONFIG_TARGET_LS1043ADCM
 	/* Set the two on-board RGMII PHY address */
 	fm_info_set_phy_address(FM1_DTSEC3, RGMII_PHY1_ADDR);
 	fm_info_set_phy_address(FM1_DTSEC4, RGMII_PHY2_ADDR);
@@ -51,8 +52,12 @@ int board_eth_init(bd_t *bis)
 	fm_info_set_phy_address(FM1_DTSEC2, QSGMII_PORT2_PHY_ADDR);
 	fm_info_set_phy_address(FM1_DTSEC5, QSGMII_PORT3_PHY_ADDR);
 	fm_info_set_phy_address(FM1_DTSEC6, QSGMII_PORT4_PHY_ADDR);
+#endif
 
 	switch (srds_s1) {
+#ifdef CONFIG_TARGET_LS1043ADCM
+	case 0x3560:
+#endif
 	case 0x1455:
 		break;
 	default:
@@ -61,14 +66,18 @@ int board_eth_init(bd_t *bis)
 		break;
 	}
 
+#ifndef CONFIG_TARGET_LS1043ADCM
 	dev = miiphy_get_dev_by_name(DEFAULT_FM_MDIO_NAME);
 	for (i = FM1_DTSEC1; i < FM1_DTSEC1 + CONFIG_SYS_NUM_FM1_DTSEC; i++)
 		fm_info_set_mdio(i, dev);
+#endif
 
+#ifndef CONFIG_TARGET_LS1043ADCM
 	/* XFI on lane A, MAC 9 */
 	fm_info_set_phy_address(FM1_10GEC1, FM1_10GEC1_PHY_ADDR);
 	dev = miiphy_get_dev_by_name(DEFAULT_FM_TGEC_MDIO_NAME);
 	fm_info_set_mdio(FM1_10GEC1, dev);
+#endif
 
 	cpu_eth_init(bis);
 #endif

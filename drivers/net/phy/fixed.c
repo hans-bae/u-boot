@@ -35,10 +35,15 @@ int fixedphy_probe(struct phy_device *phydev)
 
 	phydev->priv = priv;
 
+#ifdef CONFIG_TARGET_LS1043ADCM
+	priv->link_speed = SPEED_1000;
+	priv->duplex = DUPLEX_FULL;
+#else
 	priv->link_speed = val;
 	priv->duplex = fdtdec_get_bool(gd->fdt_blob, ofnode, "full-duplex");
 	priv->pause = fdtdec_get_bool(gd->fdt_blob, ofnode, "pause");
 	priv->asym_pause = fdtdec_get_bool(gd->fdt_blob, ofnode, "asym-pause");
+#endif
 
 	/* fixed-link phy must not be reset by core phy code */
 	phydev->flags |= PHY_FLAG_BROKEN_RESET;

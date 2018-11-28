@@ -78,6 +78,12 @@ qsgmii_loop:
 	value = PHY_SGMII_CR_DEF_VAL | PHY_SGMII_CR_RESET_AN;
 	memac_mdio_write(&bus, i, MDIO_DEVAD_NONE, 0, value);
 
+#ifdef CONFIG_TARGET_LS1043ADCM
+	mdelay(50);
+	memac_mdio_write(&bus, i, MDIO_DEVAD_NONE, 0, 0x8000);
+	memac_mdio_write(&bus, i, MDIO_DEVAD_NONE, 0x14, 0x9);
+	memac_mdio_write(&bus, i, MDIO_DEVAD_NONE, 0, 0x8140);
+#endif
 	if ((priv->enet_if == PHY_INTERFACE_MODE_QSGMII) && (i < 3)) {
 		i++;
 		goto qsgmii_loop;
@@ -472,6 +478,10 @@ static int fm_eth_open(struct eth_device *dev, bd_t *bd)
 			return ret;
 		}
 	} else {
+		fm_eth->phydev->speed = SPEED_1000;
+		fm_eth->phydev->link = 1;
+		fm_eth->phydev->duplex = DUPLEX_FULL;
+		mac->set_if_mode(mac, fm_eth->enet_if, fm_eth->phydev->speed);
 		return 0;
 	}
 #else
